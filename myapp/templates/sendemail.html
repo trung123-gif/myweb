@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}
+Thành Công
+{% endblock title %}
+
+{% block content %}
+<div id="notfound">
+	<div class="notfound">
+		<div class="notfound-404">
+			<h1>{% include 'name.html' %}</h1>
+		</div>
+		<h2>Thông Báo</h2>
+		<p>Đơn Hàng Được Tạo Thành Công Để Xem Chi Tiết Đơn Hàng Truy Cập Email</p>
+		<a href="{%url 'index_url'%}">Quay Lại Trang Chủ</a>
+	</div>
+</div>
+{% endblock content %}
+

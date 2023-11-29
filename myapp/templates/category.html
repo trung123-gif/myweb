@@ -1,0 +1,35 @@
+<div class="navbar-nav w-100" style="height: 410px">
+    {% for category_parent in categories %}
+        {% if not category_parent.category_parent %}    
+            <div class="nav-item dropdown dropright">
+                <a href="{% url 'views_url' %}?category={{category_parent.name}}&page=1" class="nav-link position-relative"><img src="{{category_parent.image}}" class="mr-1" alt="">{{category_parent.name}}
+                    {% if category_parent.category_set.all %}
+                        <i class="fa fa-angle-down float-right mt-1"></i>    
+                    {% endif %}
+                </a>
+                {% if category_parent.category_set.all %}
+                    <div class="dropdown-menu position-absolute bg-white m-0 shadow-lg rounded p-0">
+                        <div class="container" style="width: 700px; display:block" >
+                            <div class="row p-2">
+                                <div class="col p-0">
+                                    <h6 class="m-0 text-info py-1" style="cursor: pointer;">{{category_parent.name}}&nbsp;Chính Hãng</h6>
+                                    {% for category in categories %}
+                                        {% if category.category_parent_id == category_parent.id %}
+                                            <a href="{% url 'views_url' %}?category={{category.name}}&page=1" class="dropdown-item text-dark">{{category.name}}</a>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <div class="col p-0">
+                                    <h6 class="m-0 text-info py-1" style="cursor: pointer;">Chọn Laptop Theo Yêu Cầu</h6>
+                                    {% for type in types %}
+                                        <a href="{% url 'views_url' %}?type={{type.loai}}&page=1" class="dropdown-item text-dark">{{type.loai}}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>

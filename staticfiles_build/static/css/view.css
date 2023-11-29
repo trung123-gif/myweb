@@ -1,0 +1,44 @@
+.custom-control-input:checked ~ .custom-control-label::before {
+    color: #fff;
+    border-color: #00CED1;
+    background-color: #00CED1;
+}
+.page-item.active .page-link {
+    z-index: 3;
+    color: #fff !important;
+    background-color: #00CED1;
+    border-color: #00CED1;
+}
+
+.dropdown:hover>.dropdown-menu {
+    display: block;
+}
+  
+.dropdown>.dropdown-toggle:active {
+    /*Without this, clicking will make it sticky*/
+      pointer-events: none;
+}
+
+input[type="checkbox"] {
+    box-sizing: border-box;
+    padding: 0;
+    width: 16px;
+    height: 16px;
+}
+.form-select{
+    height: calc(1.5em + 0.75rem + 2px);
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #EDF1FF;
+    border-radius: 0;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.product-item .btn:hover {
+    color: #00CED1 !important;
+}

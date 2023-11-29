@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <!-- load các file trong thư mục static -->
+        {% load static %}
+        <!-- Sử dụng các filter được tạo riêng của django template -->
+        {% load myfilter %}
+
+        <meta charset="utf-8">
+        <!-- Phần title -->
+        <title>Email {% include 'name.html' %}</title>
+
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <meta content="Free HTML Templates" name="keywords">
+        <meta content="Free HTML Templates" name="description">
+
+        <!-- Favicon -->
+        <link href="{% static 'image/logo.png' %}" rel="icon">
+
+        <!-- Google Web Fonts -->
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"> 
+
+        <!-- Font Awesome -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
+        <!-- Libraries Stylesheet -->
+        <link href="{% static 'lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <style>
+            :root {
+                --bs-font-sans-serif: system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+            }
+            *{
+                box-sizing: border-box;
+            }
+            body {
+                margin: 0;
+                font-family: var(--bs-font-sans-serif);
+                font-size: 1rem;
+                font-weight: 400;
+                line-height: 1.5;
+                color: #212529;
+                background-color: #fff;
+                -webkit-text-size-adjust: 100%;
+                -webkit-tap-highlight-color: transparent;
+            }
+            h5 {
+                display: block;
+                margin-block-start: 1.67em;
+                margin-block-end: 1.67em;
+                margin-inline-start: 0px;
+                margin-inline-end: 0px;
+                margin-top: 0;
+                margin-bottom: 0.5rem;
+                font-weight: 500;
+                line-height: 1.2;
+                font-size: 1.25rem;
+            }
+            .row {
+                --bs-gutter-x: 1.5rem;
+                --bs-gutter-y: 0;
+                display: flex;
+                flex-wrap: wrap;
+                margin-top: calc(0 * -1);
+                margin-right: calc(var(--bs-gutter-x) * -.5);
+                margin-left: calc(var(--bs-gutter-x)* -.5);
+            }
+            .col {
+                flex: 1 0 0%;
+            }
+            .row>* {
+                flex-shrink: 0;
+                width: 100%;
+                max-width: 100%;
+                padding-right: calc(var(--bs-gutter-x) * .5);
+                padding-left: calc(var(--bs-gutter-x) * .5);
+                margin-top: var(--bs-gutter-y);
+            }
+
+            .table {
+                caption-side: bottom;
+                border-collapse: collapse;
+            }
+            .table {
+                display: table;
+                text-indent: initial;
+                border-spacing: 2px;
+                --bs-table-bg: transparent;
+                --bs-table-accent-bg: transparent;
+                --bs-table-striped-color: #212529;
+                --bs-table-striped-bg: rgba(0, 0, 0, 0.05);
+                --bs-table-active-color: #212529;
+                --bs-table-active-bg: rgba(0, 0, 0, 0.1);
+                --bs-table-hover-color: #212529;
+                --bs-table-hover-bg: rgba(0, 0, 0, 0.075);
+                width: 100%;
+                margin-bottom: 1rem;
+                color: #212529;
+                vertical-align: top;
+                border-color: #dee2e6;
+            }
+            .border-info {
+                border-color: #0dcaf0!important;
+            }
+            thead {
+                display: table-header-group;
+            }
+            tbody, td, tfoot, th, thead, tr {
+                border-color: inherit;
+                border-style: solid;
+                border-width: 0;
+            }
+
+            .table>thead {
+                vertical-align: bottom;
+            }
+
+            .table>tbody {
+                vertical-align: inherit;
+                display: table-row-group;
+            }
+            .table>:not(caption)>*>* {
+                padding: 0.5rem 0.5rem;
+                background-color: var(--bs-table-bg);
+                border-width: 0 1px;;
+                box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+            }
+            .text-center {
+                text-align: center!important;
+            }
+            .offset-6 {
+                margin-left: 50%;
+            }
+            .card {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                min-width: 0;
+                word-wrap: break-word;
+                background-color: #fff;
+                background-clip: border-box;
+                border: 1px solid rgba(0,0,0,.125);
+                border-radius: 0.25rem;
+            }
+            .border-secondary {
+                border-color: #6c757d!important;
+            }
+            .mb-5 {
+                margin-bottom: 3rem!important;
+            }
+            .card-header {
+                padding: 0.5rem 1rem;
+                margin-bottom: 0;
+            }
+            .border-0 {
+                border: 0!important;
+            }
+            .bg-info {
+                background-color: #0dcaf0!important;
+            }
+            .card-header:first-child {
+                border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
+            }
+            div {
+                display: block;
+            }
+            .card-body {
+                flex: 1 1 auto;
+                padding: 1rem 1rem;
+            }
+            .card-footer {
+                padding: 0.5rem 1rem;
+                border-top: 1px solid rgba(0,0,0,.125);
+            }
+            .bg-transparent {
+                background-color: transparent!important;
+            }
+            .card-footer:last-child {
+                border-radius: 0 0 calc(0.25rem - 1px) calc(0.25rem - 1px);
+            }
+        </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+          <div class="col">
+            <h5>Cảm ơn {{user.fullname}} đã đặt mua đơn hàng {{order.id}} {{date}}</h5>
+          </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <table class="table table-bordered border-info">
+                    <thead>
+                    <tr>
+                        <th scope="col" class = 'text-center'>Sản Phẩm</th>
+                        <th scope="col" class = 'text-center'>Giá</th>
+                        <th scope="col" class = 'text-center'>Số Lượng</th>
+                        <th scope="col" class = 'text-center'>Tổng</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in order_detail %}
+                            <tr>
+                                <td class = 'text-center'>{{product.product.name}}</td>
+                                <td class = 'id-price text-center'>{{product.money|price_one_producr:product.soluong|fomat_money}}</td>
+                                <td class = 'text-center'>{{product.soluong}}</td></td>
+                                <td class = 'id-price text-center'>{{product.money|fomat_money}}</td>
+                            </tr>  
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="card border-secondary mb-5">
+                    <div class="card-header bg-info border-0">
+                        <h4 class="font-weight-semi-bold m-0">Tiền</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-3 pt-1">
+                            <h6 class="font-weight-medium">Tiền Sản Phẩm</h6>
+                            <h6 class="font-weight-medium id-price selector-for-some-widget" id ="total_all">{{price|fomat_money}}</h6>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <h6 class="font-weight-medium">Phí Vận Chuyển</h6>
+                            <h6 class="font-weight-medium id-price selector-for-some-widget" id ="price_ship">{{10000|fomat_money}}</h6>
+                        </div>
+                    </div>
+                    <div class="card-footer border-info bg-transparent">
+                        <div class="d-flex justify-content-between mt-2">
+                            <h5 class="font-weight-bold">Total</h5>
+                            <h5 class="font-weight-bold selector-for-some-widget" id ="all_ship">{{sumprice|fomat_money}}</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

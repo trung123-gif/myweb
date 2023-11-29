@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load myfilter %}
+{% load humanize %}
+{% block title %}
+Infomation
+{% endblock title %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row px-xl-5 pb-3">
+        <div class="col-lg-6 col-md-12 col-sm-12 p-2">
+            <form action="" method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form-group">
+                        <label for="{{field.id_for_label}}" id = "{{field.html_name}}">{{field.label}}</label>
+                        {{field}}
+                    </div>
+                {% endfor %}
+                <h6 class=""><a href="{% url 'changepassword_url'%}" class="text-info">Thay Đổi Mật Khẩu</a></h6>
+                {% bootstrap_button "Save" button_type="submit" button_class="btn-info" %}
+                {% bootstrap_button "Cancel" button_type="link" button_class="btn-info"  href="/" %}
+            </form>            
+        </div>
+        <div class="col-lg-6 col-md-12 col-sm-12 p-2 mt-4">
+            <div class="list-group">
+                {% if  orders %}
+                    {% for order in orders %}
+                        <a href="{% url 'detail_order_url' id=order.id%}" class="list-group-item list-group-item-action">Đơn Hàng {{order|date_order}}</a>
+                    {% endfor %}                
+                {% else %}
+                    <h6 class="text-center mb-3 px-4">{{message}}</h6>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

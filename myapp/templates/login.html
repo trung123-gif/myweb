@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load myfilter %}
+{% load humanize %}
+{% block title %}
+Login
+{% endblock title %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row px-xl-5 pb-3">
+        <h5>Đăng Nhập</h5>
+    </div>
+    <div class="row px-xl-5 pb-3">
+        <div class="col-lg-6 col-md-12 p-2">
+                <a href="{% url 'index_url'%}" class="text-decoration-none d-block ">
+                    <img src="{% static 'image/logo.png'%}" class="img-fluid mx-auto d-block" alt="Responsive image">
+                </a>
+            </div>
+        <div class="col-lg-6 col-md-12 col-sm-12 p-2">
+            <form action="" method="post">
+                {% csrf_token %}
+                {% if UserForm.non_field_errors %}
+                    <div class="form-group">
+                        {% for error in UserForm.non_field_errors %}
+                            <div class="invalid-feedback d-block">
+                                {{error}}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                {% for field in UserForm %}
+                    <div class="form-group">
+                        <label for="{{field.id_for_label}}" id = "{{field.html_name}}">{{field.label}}</label>
+                        {{field}}
+                        <ul>
+                            {% for help in field.help_text %}
+                                <li class="text-muted">{{help}}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endfor %}
+                <h6 class="">Bạn Chưa Có Tài Khoản? <a href="{% url 'register_url'%}" class="text-info">Đăng Ký</a></h6>
+                {% bootstrap_button "Save" button_type="submit" button_class="btn-info" %}
+                {% bootstrap_button "Cancel" button_type="link" button_class="btn-info"  href="/" %}
+            </form>            
+        </div>
+    </div>
+</div>
+{% endblock content %}
