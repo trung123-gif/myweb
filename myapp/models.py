@@ -249,9 +249,11 @@ class User(AbstractUser):
         db_table = 'User'
 
 class Feedback(models.Model):
-    subject = models.CharField(max_length=255)
     content = models.TextField()
-    user = models.ForeignKey(to = User, on_delete= models.CASCADE)
+    user = models.ForeignKey(to = User, on_delete= models.CASCADE, null=True, blank=True)
+    product = models.ForeignKey(to = Product, on_delete= models.CASCADE, null=True, blank=True)
+    vote = models.IntegerField(null=True, blank=True)
+    date = models.DateTimeField(null=True, blank=True)
     class Meta:
         db_table = 'Feedback'
 

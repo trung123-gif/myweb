@@ -3,7 +3,7 @@ from .models import Category, Discount, Product, ThanhPho, QuanHuyen, PhuongXa, 
 from .models import Card, CPU, RAM, Harddrive ,ManHinh, Loai, Laptop, Brand, Age, Chitietdonhang
 from django.core.paginator import Paginator
 from django.db.models import Q
-from .forms import RegisterForm, UserLoginForm, OrderForm, OrderCreateForm, InfomationForm, ChangePassword
+from .forms import RegisterForm, UserLoginForm, OrderForm, OrderCreateForm, ChangePassword, ContactForm
 from django.http.response import JsonResponse
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
@@ -11,7 +11,7 @@ from datetime import datetime
 from django.utils import timezone
 from django.core.mail import BadHeaderError
 from django.conf import settings
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives, send_mail
 from django.template import loader
 from django.db.models import Max
 from django.contrib.auth.hashers import check_password, make_password
@@ -21,10 +21,13 @@ from django.contrib.auth.hashers import check_password, make_password
 def index(request):
     categories = Category.objects.all()
     types = Loai.objects.all()
+    data_type = []
+    for i in Loai.objects.filter(loai__icontains = 'Laptop'):
+        data_type.append(i.id)
     brands = Brand.objects.filter(brand__in=['Dell', 'Asus', 'HP', 'Lenovo', 'Intel', 'AMD'])
-    laptops_sale = Product.objects.filter(loai_id__in = [3,4,5,6,7], age_id = 1).order_by('-discount')[:12]
+    laptops_sale = Product.objects.filter(loai_id__in = data_type, age_id = 1).order_by('-discount')[:12]
     # Lấy 12 laptop có discount giảm dần
-    laptops_new = Product.objects.filter(loai_id__in = [3,4,5,6,7], age_id = 1).order_by('-id')[:12]
+    laptops_new = Product.objects.filter(loai_id__in = data_type, age_id = 1).order_by('-id')[:12]
     # Lấy 12 laptop mới được thêm vào
     return render(
         request=request,
@@ -45,7 +48,6 @@ def views(request):
     type = Loai.objects.all()
     brands = Brand.objects.all()
     if request.method == "GET":
-        
         # Lấy giá trị từ khóa 
         key_word_category = request.GET.get('category')
         type_category = request.GET.get('type')
@@ -65,7 +67,7 @@ def views(request):
             if category_name.category_parent:
                 list_data.append(category_name.id)
             else:
-                # Click vào danh mục cha
+            # Click vào danh mục cha
                 if category_name.category_set.all():
                     for category in Category.objects.filter(category_parent_id = category_name.id):
                     # Lấy toàn bộ id danh mục con có parrent_id = id của danh mục cha
@@ -151,6 +153,14 @@ def detail(request, id):
     products_similar = Product.objects.filter(brand_id = brand, loai_id = type_new, price__isnull=False)
     # Lấy ra các sản phẩm cùng loại, cùng brand end
 
+    # Review
+    reviews = Feedback.objects.filter(product = product)
+    tb_vote = 0
+    if reviews:
+        sum_vote = 0
+        for vote in reviews:
+            sum_vote+=vote.vote
+        tb_vote = sum_vote//len(reviews)
     return render(
         request=request,
         template_name= 'detail.html',
@@ -160,6 +170,8 @@ def detail(request, id):
             'types': type,
             'images': product.image_set.all(),
             'products_similar': products_similar,
+            'reviews': reviews,
+            'tb_vote': tb_vote
         }
     )
 ## Trang Detail End
@@ -612,10 +624,28 @@ def send_email(request):
 ## Xử lý checkout end
 
 ## Contact start
+@login_required(login_url='login_user_url')
 def contact(request):
+    if request.method == "POST":
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+        email_form = settings.EMAIL_HOST_USER
+        recipient_list = [email,]
+        try:
+            send_mail(subject, message, email_form, recipient_list)
+        except BadHeaderError:
+            return render(
+                request=request,
+                template_name= '404.html'
+            )
     return render(
         request=request,
-        template_name= 'contact.html'
+        template_name= 'contact.html',
+        context= {
+            'form' : ContactForm
+        }
     )
 ## Contact End
 
@@ -732,3 +762,29 @@ def detail_order(request,id):
         }
     )
 ## Detail Order End
+
+## Rating Review Start
+@login_required(login_url='login_user_url')
+def review(request):
+    if request.user.is_authenticated:
+        user = User.objects.get(username = request.user)
+        if request.method == 'POST':
+            id = int(request.POST.get('id'))
+            rating = request.POST.get('rating')
+            review = request.POST.get('review')
+            if rating:
+                if rating.isdigit():
+                    rating = int(rating)
+            else:
+                rating = 0
+            try:
+                product = Product.objects.get(id = id)
+                Feedback.objects.create(user= user, product = product, vote = rating, content = review, date = timezone.now())
+                return JsonResponse({
+                    'message': 'Thành Công'
+                }, status = 200)
+            except Product.DoesNotExist:
+                return JsonResponse({
+                    'message': 'Thất Bại'
+                }, status = 302)
+## Rating Review End

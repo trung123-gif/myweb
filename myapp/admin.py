@@ -49,7 +49,7 @@ class UserAdmin(admin.ModelAdmin):
     list_display = ['username', 'password', 'fullname', 'first_name', 'last_name', 'ngaysinh', 'email', 'phone', 'diachi', 'phuongxa', 'quanhuyen', 'thanhpho', 'save_password']
 
 class FeedbackAdmin(admin.ModelAdmin):
-    list_display = ['subject', 'content', 'user']
+    list_display = ['content', 'user', 'product', 'vote', 'date']
 
 class StatusAdmin(admin.ModelAdmin):
     list_display = ['status']

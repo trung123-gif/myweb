@@ -107,4 +107,13 @@ def fomat_money(price):
 
 @register.filter()
 def date_order(order):
-    return order.date.strftime("%Y/%m/%d %H:%M:%S")
+    return order.strftime("%Y/%m/%d %H:%M:%S")
+
+@register.filter()
+def make_range(number):
+    return range(0, number)
+
+@register.filter()
+def so_sanh(number1, number2):
+    return number1 > number2
+

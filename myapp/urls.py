@@ -50,4 +50,7 @@ urlpatterns = [
 
     # Detail Order
     path(route='infomation/order/<int:id>', view=views.detail_order, name = 'detail_order_url'), 
+
+    # Detail Order
+    path(route='reviews', view=views.review, name = 'reviews_url'), 
 ]

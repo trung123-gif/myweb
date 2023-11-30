@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load myfilter %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
 
 {% block title %}
 {{object.product.name}}
@@ -70,13 +73,23 @@
             <!-- product like -->
             <div class="d-flex mb-3">
                 <div class="text-primary mr-2">
-                    <small class="fas fa-star text-info"></small>
-                    <small class="fas fa-star text-info"></small>
-                    <small class="fas fa-star text-info"></small>
-                    <small class="fas fa-star-half-alt text-info"></small>
-                    <small class="far fa-star text-info"></small>
+                    {% if tb_vote|so_sanh:0 %}
+                        {% for star in 5|make_range %}
+                            {% if tb_vote|so_sanh:star %}
+                                <small class="fas fa-star text-info"></small>
+                            {% else %}
+                                <small class="far fa-star text-info"></small>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <small class="far fa-star text-info"></small>
+                        <small class="far fa-star text-info"></small>
+                        <small class="far fa-star text-info"></small>
+                        <small class="far fa-star text-info"></small>
+                        <small class="far fa-star text-info"></small>
+                    {% endif %}
                 </div>
-                <small class="pt-1">(50 Reviews)</small>
+                <small class="pt-1">({{reviews|len_filter}} Reviews)</small>
             </div>
 
             <!-- product price -->
@@ -146,7 +159,7 @@
             <div class="nav nav-tabs justify-content-center border-secondary mb-4">
                 <a class="nav-item nav-link active text-info" data-toggle="tab" href="#tab-pane-1">Description</a>
                 <a class="nav-item nav-link text-info" data-toggle="tab" href="#tab-pane-2">Information</a>
-                <a class="nav-item nav-link text-info" data-toggle="tab" href="#tab-pane-3">Reviews (0)</a>
+                <a class="nav-item nav-link text-info" data-toggle="tab" href="#tab-pane-3">Reviews ({{reviews|len_filter}})</a>
             </div>
             <div class="tab-content">
                 <!-- product name -->
@@ -177,52 +190,58 @@
                 <div class="tab-pane fade" id="tab-pane-3">
                     <div class="row">
                         <div class="col-md-6">
-                            <h4 class="mb-4">1 review for "Colorful Stylish Shirt"</h4>
-                            <div class="media mb-4">
-                                <img src="{% static 'image/user.jpg' %}" alt="Image" class="img-fluid mr-3 mt-1" style="width: 45px;">
-                                <div class="media-body">
-                                    <h6>John Doe<small> - <i>01 Jan 2045</i></small></h6>
-                                    <div class="text-primary mb-2">
-                                        <i class="fas fa-star text-info"></i>
-                                        <i class="fas fa-star text-info"></i>
-                                        <i class="fas fa-star text-info"></i>
-                                        <i class="fas fa-star-half-alt text-info"></i>
-                                        <i class="far fa-star text-info"></i>
-                                    </div>
-                                    <p>Diam amet duo labore stet elitr ea clita ipsum, tempor labore accusam ipsum et no at. Kasd diam tempor rebum magna dolores sed sed eirmod ipsum.</p>
-                                </div>
-                            </div>
+                            {% if reviews %}
+                                {% for review in reviews %}
+                                    <div class="media mb-4">
+                                        <h6 id="user-icon" class = 'm-0 rounded-circle border text-center' style="width: 40px;height: 36px;line-height: 36px;">{{review.user.username|icon_user}}</h6>
+                                        <div class="media-body">
+                                            <h6>{{review.user.fullname}}<small><i>{{review.date|date_order}}</i></small></h6>
+                                            <div class="text-primary mb-2">
+                                                {% if review.vote %}
+                                                    {% for star in 5|make_range %}
+                                                        {% if review.vote|so_sanh:star %}
+                                                            <i class="fas fa-star text-info"></i>
+                                                        {% else %}
+                                                            <i class="far fa-star text-info"></i>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <i class="far fa-star text-info"></i>
+                                                    <i class="far fa-star text-info"></i>
+                                                    <i class="far fa-star text-info"></i>
+                                                    <i class="far fa-star text-info"></i>
+                                                    <i class="far fa-star text-info"></i>
+                                                {% endif %}
+                                            </div>
+                                            <p>{{review.content}}</p>
+                                        </div>
+                                    </div>                                    
+                                {% endfor %}                                
+                            {% else %}
+                                
+                            {% endif %}
                         </div>
                         <div class="col-md-6">
                             <h4 class="mb-4">Leave a review</h4>
-                            <small>Your email address will not be published. Required fields are marked *</small>
                             <div class="d-flex my-3">
-                                <p class="mb-0 mr-2">Your Rating * :</p>
-                                <div class="text-primary">
-                                    <i class="far fa-star text-info"></i>
-                                    <i class="far fa-star text-info"></i>
-                                    <i class="far fa-star text-info"></i>
-                                    <i class="far fa-star text-info"></i>
-                                    <i class="far fa-star text-info"></i>
-                                </div>
+                                <p class="mb-0 mr-2">Rating:</p>
+                                <section class="container">
+                                    <input type="radio" name="example" class="rating" value="1" />
+                                    <input type="radio" name="example" class="rating" value="2" />
+                                    <input type="radio" name="example" class="rating" value="3" />
+                                    <input type="radio" name="example" class="rating" value="4" />
+                                    <input type="radio" name="example" class="rating" value="5" />
+                                </section>
                             </div>
-                            <form>
+                            <div>
                                 <div class="form-group">
                                     <label for="message">Your Review *</label>
                                     <textarea id="message" cols="30" rows="5" class="form-control"></textarea>
                                 </div>
-                                <div class="form-group">
-                                    <label for="name">Your Name *</label>
-                                    <input type="text" class="form-control" id="name">
+                                <div class="form-group mb-0" >
+                                    <button id ='btn_review' data-product = "{{product.id}}" data-url ="{% url 'detail_url' id=product.id%}"><i class="btn_info" >Send</button>
                                 </div>
-                                <div class="form-group">
-                                    <label for="email">Your Email *</label>
-                                    <input type="email" class="form-control" id="email">
-                                </div>
-                                <div class="form-group mb-0">
-                                    <input type="submit" value="Leave Your Review" class="btn btn-info px-3">
-                                </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -243,19 +262,21 @@
         {% for product in products_similar %} 
             <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                 <div class="card product-item border-0 mb-4">
-                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                        <img class="img-fluid w-100" src="{{product.id|get_image}}" alt="{{product.name}}" style="height: 240px;">
-                    </div>
-                    <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                        <h6 class="text-truncate mb-3">{{product.name}}</h6>
-                        <div class="d-flex justify-content-center">
-                            {% if product.discount %}
-                                <h6 class ="id-price">{{product.price|price_sale:product.discount.discount}}</h6><h6 class="text-muted ml-2"><del class ="id-price">{{product.price}}</del></h6>
-                            {% else %}
-                                <h6 class ="id-price">{{product.price}}</h6><h6 class="text-muted ml-2"></h6>
-                            {% endif %}
+                    <a href="{% url 'detail_url' id=product.id%}" target="_blank" class ="text-decoration-none">
+                        <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                            <img class="img-fluid w-100" src="{{product.id|get_image}}" alt="{{product.name}}" style="height: 240px;">
                         </div>
-                    </div>
+                        <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+                            <h6 class="text-truncate mb-3">{{product.name}}</h6>
+                            <div class="d-flex justify-content-center">
+                                {% if product.discount %}
+                                    <h6 class ="id-price">{{product.price|price_sale:product.discount.discount}}</h6><h6 class="text-muted ml-2"><del class ="id-price">{{product.price}}</del></h6>
+                                {% else %}
+                                    <h6 class ="id-price">{{product.price}}</h6><h6 class="text-muted ml-2"></h6>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </a>
                     <div class="card-footer d-flex justify-content-between bg-light border">
                         <a href="{% url 'detail_url' id=product.id%}" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-info mr-1"></i>View</a>
                         {% if user.is_authenticated %}
@@ -335,6 +356,154 @@
             }
             button.parent().parent().find('input').val(newVal);
         });
+    
+    // jQuery Star Rating Plugin
+
+    (function($){
+        $.fn.rating = function(callback){
+            
+            callback = callback || function(){};
+
+            // each for all item
+            this.each(function(i, v){
+                
+                $(v).data('rating', {callback:callback})
+                    .bind('init.rating', $.fn.rating.init)
+                    .bind('set.rating', $.fn.rating.set)
+                    .bind('hover.rating', $.fn.rating.hover)
+                    .trigger('init.rating');
+            });
+        };
+        
+        $.extend($.fn.rating, {
+            init: function(e){
+                var el = $(this),
+                    list = '',
+                    isChecked = null,
+                    childs = el.children(),
+                    i = 0,
+                    l = childs.length;
+                
+                for (; i < l; i++) {
+                    list = list + '<a class="star" title="' + $(childs[i]).val() + '" />';
+                    if ($(childs[i]).is(':checked')) {
+                        isChecked = $(childs[i]).val();
+                    };
+                };
+                
+                childs.hide();
+                
+                el
+                    .append('<div class="stars">' + list + '</div>')
+                    .trigger('set.rating', isChecked);
+                
+                $('a', el).bind('click', $.fn.rating.click);            
+                el.trigger('hover.rating');
+            },
+            set: function(e, val) {
+                var el = $(this),
+                    item = $('a', el),
+                    input = undefined;
+                
+                if (val) {
+                    item.removeClass('fullStar');
+                    
+                    input = item.filter(function(i){
+                        if ($(this).attr('title') == val)
+                            return $(this);
+                        else
+                            return false;
+                    });
+                    
+                    input
+                        .addClass('fullStar')
+                        .prevAll()
+                        .addClass('fullStar');
+                }
+                
+                return;
+            },
+            hover: function(e){
+                var el = $(this),
+                    stars = $('a', el);
+                
+                stars.bind('mouseenter', function(e){
+                    // add tmp class when mouse enter
+                    $(this)
+                        .addClass('tmp_fs')
+                        .prevAll()
+                        .addClass('tmp_fs');
+                    
+                    $(this).nextAll()
+                        .addClass('tmp_es');
+                });
+                
+                stars.bind('mouseleave', function(e){
+                    // remove all tmp class when mouse leave
+                    $(this)
+                        .removeClass('tmp_fs')
+                        .prevAll()
+                        .removeClass('tmp_fs');
+                    
+                    $(this).nextAll()
+                        .removeClass('tmp_es');
+                });
+            },
+            click: function(e){
+                e.preventDefault();
+                var el = $(e.target),
+                    container = el.parent().parent(),
+                    inputs = container.children('input'),
+                    rate = el.attr('title')
+                    ;
+                $('.container').attr('data', rate)
+                matchInput = inputs.filter(function(i){
+                    if ($(this).val() == rate)
+                        return true;
+                    else
+                        return false;
+                });
+                
+                matchInput
+                    .prop('checked', true)
+                    .siblings('input').prop('checked', false);
+                
+                container
+                    .trigger('set.rating', matchInput.val())
+                    .data('rating').callback(rate, e);
+            }
+        });
+        
+    })(jQuery);
+
+    $(function(){
+        $('.container').rating();
+    });
+    
+    $('#btn_review').click(function(e){
+        var product = $(this).data('product')
+        var review = $('#message').val()
+        var rating = $('.container').attr('data')
+        var url = $(this).data('url')
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'reviews_url'%}",
+            data: {
+                id: product,
+                rating: rating,
+                review: review,
+                csrfmiddlewaretoken: "{{csrf_token}}"
+            },
+            success: function(data){
+                console.log('oki')
+            },
+            error: function(xhr){
+                console.log('ko')
+            }
+        })
+        window.location.href = url;
+    })
+
     </script>
 {% endblock scripts_content %}
 

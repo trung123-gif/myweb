@@ -302,23 +302,26 @@ class OrderCreateForm(forms.ModelForm):
             'email': 'Email:',
         }
 
-class InfomationForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ['username', 'password', 'fullname', 'phone', 'diachi', 'email']
-        widgets = {
-            'username': forms.TextInput(attrs = {"class":"form-control"}),
-            'fullname': forms.TextInput(attrs = {"class":"form-control"}),
-            'password': forms.TextInput(attrs = {"class":"form-control"}),
-            'phone': forms.TextInput(attrs = {"class":"form-control"}),
-            'diachi': forms.TextInput(attrs = {"class":"form-control "}),
-            'email': forms.TextInput(attrs= {"class":"form-control"}),
-        }
-        labels = {
-            'username': 'Tên Đăng Nhập',
-            'password': 'Mật Khẩu',
-            'fullname': 'Họ và Tên:',
-            'phone': 'Số Điện Thoại:',
-            'diachi': 'Địa Chi:',
-            'email': 'Email:',
-        }
+class ContactForm(forms.Form):
+    name = forms.CharField(
+        label='Tên',
+        max_length=255,
+        widget=forms.TextInput(attrs = {"class":"form-control", "placeholder":"Your Name"})
+    )
+    email = forms.EmailField(
+        label='Email',
+        max_length=50,
+        min_length=8,
+        widget=forms.EmailInput(attrs =  {"class":"form-control", "placeholder":"Your Email"})
+        )
+
+    subject = forms.CharField(
+        label='Subject',
+        widget=forms.TextInput(attrs = {"class":"form-control", "placeholder":"Subject"}),
+    )
+    message = forms.CharField(
+        label='Message',
+        max_length=255,
+        min_length=8,
+        widget=forms.Textarea(attrs =  {"class":"form-control", "placeholder":"Message"})
+        )
