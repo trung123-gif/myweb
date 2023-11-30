@@ -750,15 +750,20 @@ def validation_password_user(request):
 ## Detail Order Start
 @login_required(login_url='login_user_url')
 def detail_order(request,id):
+    message = ""
     if request.user.is_authenticated:
-        user = User.objects.get(username = request.user)
-        order_detail = Chitietdonhang.objects.filter(order_id = id, user=user)
-    
+        if request.method == 'GET':
+            user = User.objects.get(username = request.user)
+            order_detail = Chitietdonhang.objects.filter(order_id = id)
+        if not order_detail:
+            message = "Chưa Có Đơn Hàng Nào"
+
     return render(
         request=request,
         template_name= 'orderdetail.html',
         context= {
-            'order_detail': order_detail
+            'order_detail': order_detail,
+            'message': message
         }
     )
 ## Detail Order End
