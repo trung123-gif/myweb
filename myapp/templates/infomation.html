@@ -29,7 +29,7 @@ Infomation
             <div class="list-group">
                 {% if  orders %}
                     {% for order in orders %}
-                        <a href="{% url 'detail_order_url' id=order.id%}" class="list-group-item list-group-item-action">Đơn Hàng {{order|date_order}}</a>
+                        <a href="{% url 'detail_order_url' id=order.id%}" class="list-group-item list-group-item-action">Đơn Hàng {{order.date|date_order}}</a>
                     {% endfor %}                
                 {% else %}
                     <h6 class="text-center mb-3 px-4">{{message}}</h6>

@@ -43,7 +43,10 @@ Login
                         </ul>
                     </div>
                 {% endfor %}
-                <h6 class="">Bạn Chưa Có Tài Khoản? <a href="{% url 'register_url'%}" class="text-info">Đăng Ký</a></h6>
+                <div class = "d-flex justify-content-between">
+                    <h6 class="">Bạn Chưa Có Tài Khoản? <a href="{% url 'register_url'%}" class="text-info">Đăng Ký</a></h6>
+                    <h6 class=""><a href="{% url 'forgot_password_url'%}" class="text-info">Quên Mật Khẩu</a></h6>
+                </div>
                 {% bootstrap_button "Save" button_type="submit" button_class="btn-info" %}
                 {% bootstrap_button "Cancel" button_type="link" button_class="btn-info"  href="/" %}
             </form>            

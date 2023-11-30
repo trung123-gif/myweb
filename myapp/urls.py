@@ -53,4 +53,10 @@ urlpatterns = [
 
     # Detail Order
     path(route='reviews', view=views.review, name = 'reviews_url'), 
+
+    # Forgot Password
+    path(route='forgotpassword/', view=views.forgot_password, name = 'forgot_password_url'), 
+    path(route='validation_username_forgotpassword/', view=views.validation_username_forgot_password, name = 'validation_username_forgot_password_url'), 
+    path(route='validation_email_forgotpassword/', view=views.validation_email_forgot_password, name = 'validation_email_forgot_password_url'), 
+    path(route='forgotpassword/confirm', view=views.confirm_token, name = 'confirm_token_password_url'), 
 ]

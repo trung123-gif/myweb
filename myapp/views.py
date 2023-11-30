@@ -3,7 +3,7 @@ from .models import Category, Discount, Product, ThanhPho, QuanHuyen, PhuongXa, 
 from .models import Card, CPU, RAM, Harddrive ,ManHinh, Loai, Laptop, Brand, Age, Chitietdonhang
 from django.core.paginator import Paginator
 from django.db.models import Q
-from .forms import RegisterForm, UserLoginForm, OrderForm, OrderCreateForm, ChangePassword, ContactForm
+from .forms import RegisterForm, UserLoginForm, OrderForm, OrderCreateForm, ChangePassword, ContactForm, ForgotPasswordForm, TokenPasswordForm
 from django.http.response import JsonResponse
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
@@ -13,8 +13,8 @@ from django.core.mail import BadHeaderError
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives, send_mail
 from django.template import loader
-from django.db.models import Max
-from django.contrib.auth.hashers import check_password, make_password
+from django.contrib.auth.hashers import check_password
+from django.contrib.auth.tokens import default_token_generator 
 # Create your views here.
 
 ## Trang Chủ Start
@@ -752,7 +752,7 @@ def validation_password_user(request):
 def detail_order(request,id):
     if request.user.is_authenticated:
         user = User.objects.get(username = request.user)
-        order_detail = Chitietdonhang.objects.filter(order_id = id)
+        order_detail = Chitietdonhang.objects.filter(order_id = id, user=user)
     
     return render(
         request=request,
@@ -788,3 +788,98 @@ def review(request):
                     'message': 'Thất Bại'
                 }, status = 302)
 ## Rating Review End
+
+## Forgot Password Start
+def forgot_password(request):
+    if request.method == "POST":
+        print('oki')
+        form = ForgotPasswordForm(request.POST)
+        if form.is_valid():
+            username = request.POST.get('username')
+            user = User.objects.get(username = username)
+            email = request.POST.get('email')
+            token = default_token_generator.make_token(user)
+            subject = 'Email Xác Nhận Quên Mật Khẩu'
+            message = token
+            email_form = settings.EMAIL_HOST_USER
+            recipient_list = [email,]
+            try:
+                send_mail(subject, message, email_form, recipient_list)
+                return redirect('confirm_token_password_url')
+            except BadHeaderError:
+                return render(
+                    request=request,
+                    template_name= '404.html'
+                )
+        else:
+            return render(
+                request=request,
+                template_name= 'forgot_password.html',
+                context= {
+                    'form': form,
+            }
+        )
+    return render(
+        request=request,
+        template_name= 'forgot_password.html',
+        context= {
+            'form': ForgotPasswordForm,
+        }
+    )
+
+def confirm_token(request):
+    if request.method == "POST":
+        form = TokenPasswordForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({
+                'message': f'Đặt Mật Khẩu Mới Thành Công'
+            }, status = 200)
+        else:
+            return render(
+                request=request,
+                template_name= 'confirm_token_password.html',
+                context= {
+                    'form': form,
+                }
+            )
+    return render(
+        request=request,
+        template_name= 'confirm_token_password.html',
+        context= {
+            'form': TokenPasswordForm,
+        }
+    )
+
+def validation_username_forgot_password(request):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        try:
+            User.objects.get(username=username)
+            return JsonResponse({
+                'message': f'Tên Đăng Nhập Trùng Khớp'
+            }, status = 200)
+        except User.DoesNotExist:
+            return JsonResponse({
+                    'message': f'Tên Đăng Nhập Không Tồn Tại'
+                }, status = 302)
+
+def validation_email_forgot_password(request):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        try:
+            user = User.objects.get(username=username)
+            if user.email != email:
+                return JsonResponse({
+                    'message': f'Email xác nhận không chính xác'
+                }, status = 302)
+        except User.DoesNotExist:
+            return JsonResponse({
+                    'message': f'Tên Đăng Nhập Không Tồn Tại'
+                }, status = 302)
+        else:
+            return JsonResponse({
+                'message': f'Email trùng khớp'
+            }, status = 200)
+## Forgot Password End

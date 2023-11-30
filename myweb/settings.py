@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-lavg*$jq#%kcl_e-(@_q39(d59pqkx+5gc4ftj+8=sq_(enqw4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'thanhtrung0599.pythonanywhere.com']
 
 
 # Application definition
@@ -78,22 +78,22 @@ WSGI_APPLICATION = 'myweb.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 # SQLite
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default="sqlite:///" + os.path.join(BASE_DIR, "db.sqlite3")
-#     )
-# }
+DATABASES = {
+    'default': dj_database_url.config(
+        default="sqlite:///" + os.path.join(BASE_DIR, "db.sqlite3")
+    )
+}
 
 # MySQL
-DATABASES = {
-    'default': {
-        'NAME': 'django_web',
-        'ENGINE': 'django.db.backends.mysql',
-        'HOST': '127.0.0.1',
-        'USER': 'root',
-        'PASSWORD': 'trung4049'
-        }
-}
+# DATABASES = {
+#     'default': {
+#         'NAME': 'django_web',
+#         'ENGINE': 'django.db.backends.mysql',
+#         'HOST': '127.0.0.1',
+#         'USER': 'root',
+#         'PASSWORD': 'trung4049'
+#         }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -159,4 +159,5 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'thanhtrung0599@gmail.com'
 EMAIL_HOST_PASSWORD = 'talw xzme ldvi mxeq'
 
-CSRF_TRUSTED_ORIGINS = ['https://*.ngrok-free.app','https://*.127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['https://*.pythonanywhere.com','https://*.127.0.0.1']
+PASSWORD_RESET_TIMEOUT = 3600

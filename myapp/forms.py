@@ -5,6 +5,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import check_password, make_password
+from django.contrib.auth.tokens import default_token_generator  
+
 class RegisterForm(forms.Form):
     months={
         1:'Tháng 1',
@@ -325,3 +327,114 @@ class ContactForm(forms.Form):
         min_length=8,
         widget=forms.Textarea(attrs =  {"class":"form-control", "placeholder":"Message"})
         )
+    
+class ForgotPasswordForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email']
+        widgets = {
+            'username': forms.TextInput(attrs = {"class":"form-control"}),
+            'email': forms.TextInput(attrs= {"class":"form-control"}),
+        }
+        labels = {
+            'username': 'Tên Đăng Nhập:',
+            'email': 'Email:',
+        }
+    def clean(self):
+        username = self.cleaned_data.get('username')
+        email = self.cleaned_data.get('email')
+        try:
+            user = User.objects.get(username=username)
+            if user.email != email:
+                self._errors['email'] = self.error_class([
+                'Email xác nhận không chính xác'])
+        except User.DoesNotExist:
+            self._errors['username'] = self.error_class([
+                'Tên Đăng Nhập Không Tồn Tại'])
+        return self.cleaned_data
+
+
+class TokenPasswordForm(forms.Form):
+    username = forms.CharField(
+        label='Tên Đăng Nhập',
+        max_length=255,
+        widget=forms.TextInput(attrs =  {"class":"form-control", "placeholder":"Tên Đăng Nhập", 'required':''})
+        )
+    token = forms.CharField(
+        label='Mã Xác Nhận',
+        max_length=255,
+        help_text= ["Mã Xác Nhận Đã Được Gửi Tới Email"],
+        widget=forms.TextInput(attrs = {"class":"form-control", "placeholder":"Mã Xác Nhận", 'required':''})
+    )
+    password1 = forms.CharField(
+        label='Mật khẩu mới',
+        max_length=50,
+        min_length=8,
+        help_text= ["Mật khẩu của bạn phải chứa ít nhất 8 ký tự.","Mật khẩu của phải có số.", "Mật khẩu của bạn chứa ký tự viết hoa.", "Mật khẩu của bạn chứa ký tự đặc biệt.(@,#,%...)"],
+        widget=forms.PasswordInput(attrs = {"class":"form-control","placeholder":"Mật Khẩu Mới",'required':''}),
+    )
+    password2 = forms.CharField(
+        label='Xác nhận mật khẩu',
+        max_length=50,
+        min_length=8,
+        widget=forms.PasswordInput(attrs =  {"class":"form-control","placeholder":"Xác nhận mật khẩu", 'required':''})
+        )
+    
+    def clean(self):
+        username = self.cleaned_data.get('username')
+        token = self.cleaned_data.get('token')
+        try:
+            user = User.objects.get(username=username)
+            if not default_token_generator.check_token(user, token):
+                self._errors['token'] = self.error_class([
+                'Mã Xác Nhận Không Chính Xác'])
+        except User.DoesNotExist:
+            self._errors['username'] = self.error_class([
+                'Tên Đăng Nhập Không Tồn Tại'])
+        password1 = self.cleaned_data.get('password1')
+        password2 = self.cleaned_data.get('password2')
+        if password1:
+            lower = 0
+            upper = 0
+            number = 0
+            special = 0
+            space = 0
+            for i in password1:
+                if i.isalpha():
+                    if i.islower():
+                        lower+=1
+                    else:
+                        upper+=1
+                elif i.isdigit():
+                    number+=1
+                elif i.isspace():
+                    space+=1
+                else:
+                    special+=1
+            if lower == 0:
+                self._errors['password1'] = self.error_class([
+                    'Mật khẩu phải có ký tự viết thường'])
+            elif upper == 0:
+                self._errors['password1'] = self.error_class([
+                    'Mật khẩu phải có ký tự viết hoa'])
+            elif number == 0:
+                self._errors['password1'] = self.error_class([
+                    'Mật khẩu phải có số'])
+            elif space > 0:
+                self._errors['password1'] = self.error_class([
+                    'Mật khẩu không chứa khoảng trắng'])
+            elif special == 0:
+                self._errors['password1'] = self.error_class([
+                    'Mật khẩu phải bao gồm 1 ký tự đặc biệt'])
+
+        if password1 != password2:
+            self._errors['password2'] = self.error_class([
+                'Mật khẩu không đúng. Vui lòng nhập lại'])
+        return self.cleaned_data
+    
+    def save(self):
+        username = self.cleaned_data.get('username')
+        user = User.objects.get(username=username)
+        user.set_password(self.cleaned_data['password1'])
+        user.save_password = self.cleaned_data['password1']
+        user.save()
