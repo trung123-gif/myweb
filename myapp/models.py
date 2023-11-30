@@ -251,7 +251,7 @@ class User(AbstractUser):
 class Feedback(models.Model):
     content = models.TextField()
     user = models.ForeignKey(to = User, on_delete= models.CASCADE, null=True, blank=True)
-    product = models.ForeignKey(to = Product, on_delete= models.CASCADE, null=True, blank=True)
+    product = models.ForeignKey(to = Product, on_delete= models.DO_NOTHING, null=True, blank=True)
     vote = models.IntegerField(null=True, blank=True)
     date = models.DateTimeField(null=True, blank=True)
     class Meta:

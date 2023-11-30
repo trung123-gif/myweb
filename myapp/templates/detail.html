@@ -189,13 +189,13 @@
                 <!-- review start-->
                 <div class="tab-pane fade" id="tab-pane-3">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-6 overflow-scroll">
                             {% if reviews %}
                                 {% for review in reviews %}
                                     <div class="media mb-4">
                                         <h6 id="user-icon" class = 'm-0 rounded-circle border text-center' style="width: 40px;height: 36px;line-height: 36px;">{{review.user.username|icon_user}}</h6>
                                         <div class="media-body">
-                                            <h6>{{review.user.fullname}}<small><i>{{review.date|date_order}}</i></small></h6>
+                                            <h6>{{review.user.fullname}}<small class="mx-1"><i>{{review.date|date_order}}</i></small></h6>
                                             <div class="text-primary mb-2">
                                                 {% if review.vote %}
                                                     {% for star in 5|make_range %}

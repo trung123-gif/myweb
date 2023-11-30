@@ -78,22 +78,22 @@ WSGI_APPLICATION = 'myweb.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 # SQLite
-DATABASES = {
-    'default': dj_database_url.config(
-        default="sqlite:///" + os.path.join(BASE_DIR, "db.sqlite3")
-    )
-}
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default="sqlite:///" + os.path.join(BASE_DIR, "db.sqlite3")
+#     )
+# }
 
 # MySQL
-# DATABASES = {
-#     'default': {
-#         'NAME': 'django',
-#         'ENGINE': 'django.db.backends.mysql',
-#         'HOST': '127.0.0.1',
-#         'USER': 'root',
-#         'PASSWORD': 'trung4049'
-#         }
-# }
+DATABASES = {
+    'default': {
+        'NAME': 'django_web',
+        'ENGINE': 'django.db.backends.mysql',
+        'HOST': '127.0.0.1',
+        'USER': 'root',
+        'PASSWORD': 'trung4049'
+        }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
