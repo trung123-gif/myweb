@@ -118,7 +118,7 @@
                 <div class="input-group quantity mr-3" style="width: 130px;">
                     <div class="input-group-btn">
                         <button class="btn btn-info btn-minus" >
-                        <i class="fa fa-minus"></i>
+                            <i class="fa fa-minus"></i>
                         </button>
                     </div>
                     <input type="text" class="form-control bg-secondary text-center" id ='input_count' value="1">
@@ -128,7 +128,12 @@
                         </button>
                     </div>
                 </div>
-                <button data-href="{% url 'add_to_cart_url' id=product.id%}" class="btn btn-info px-3" id ='btn_count'><i class="fa fa-shopping-cart mr-1" ></i> Add To Cart</button>
+                    {% if user.is_authenticated %}
+                        <button data-href="{% url 'add_to_cart_url' id=product.id%}" class="btn btn-info px-3" id ='btn_count'><i class="fa fa-shopping-cart mr-1" ></i> Add To Cart</button>
+                    {% else %}
+                        <a href="{% url 'add_to_cart_url' id=product.id%}" class="btn btn-info px-3"><i class="fa fa-shopping-cart mr-1" ></i> Add To Cart</a>
+                    {% endif %}
+                </div>
             </div>
 
             <!-- product share -->
@@ -239,7 +244,11 @@
                                     <textarea id="message" cols="30" rows="5" class="form-control"></textarea>
                                 </div>
                                 <div class="form-group mb-0" >
-                                    <button class="btn btn-info" id ='btn_review' data-product = "{{product.id}}" data-url ="{% url 'detail_url' id=product.id%}"><i class="btn_info" >Send</button>
+                                    {% if user.is_authenticated %}
+                                        <button class="btn btn-info" id ='btn_review' data-product = "{{product.id}}" data-url ="{% url 'detail_url' id=product.id%}"><i class="btn_info" >Send</button>
+                                    {% else %}
+                                        <a href="{% url 'login_user_url' %}?next=/views/detail/{{product.id}}" class="btn btn-info px-3"><i class="fa fa-shopping-cart mr-1" ></i> Add To Cart</a>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -304,7 +313,6 @@
                     url: href,
                     data: {
                         count: $("#input_count").val(),
-                        login: 'True',
                         csrfmiddlewaretoken: "{{csrf_token}}"
                     },
                     success: function(data){
@@ -314,6 +322,7 @@
                             $('#modal_message').removeClass('d-block')
                             $('#message_modal').text()
                         }, 2000);
+                        console.log('oki')
                     },
                     error: function(xhr){
                         $('#modal_message').addClass('d-block')
@@ -322,10 +331,10 @@
                             $('#modal_message').removeClass('d-block')
                             $('#message_modal').text()
                         }, 2000);
+                        console.log('ko')
                     }
-                });
+                })
                 var count_number_product = parseInt($('#count-cart').text())
-                console.log(count_number_product)
                 $('#count-cart').text(count_number_product+parseInt($("#input_count").val()))
             })
         })

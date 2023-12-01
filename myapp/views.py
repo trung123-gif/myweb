@@ -139,7 +139,6 @@ def views(request):
 ## Trang Views End
 
 ## Trang Detail Start    
-@login_required(login_url='login_user_url')
 def detail(request, id):
     categories = Category.objects.all()
     type = Loai.objects.all()
@@ -181,19 +180,21 @@ def detail(request, id):
 def add_to_card(request, id):
     # Lấy sản phẩm cầm thêm vào card
     product = Product.objects.get(id=id)
-
     # Số sản phẩm thêm vào card khi chưa đăng nhập
     count_product = 1
-
+    login = 0
     # Lấy user đã đăng nhập
-    login_user = User.objects.get(username=request.user)
+    try:
+        login_user = User.objects.get(username=request.user)
+        login = 1
+    except User.DoesNotExist:
+        login = 0
     # Login = False thêm số lượng trả về JsonResponse. Thêm số lượng khi đã đăng nhập (Sử dụng ajax base.html)
     # Login = True thêm số lượng trả về redirect. Thêm số lượng khi chưa đăng nhập rồi yêu cầu đăng nhập mới cho add
-    login = 'False'
+
     if request.method == 'POST':
         # Số sản phẩm thêm vào card khi đã đăng nhập
         count_product = int(request.POST.get('count'))
-        login = request.POST.get('login')
 
     # Lấy giá sale nếu cố
     try:     
@@ -210,7 +211,7 @@ def add_to_card(request, id):
             # Tăng số lượng trong đơn hàng, thay đổi giá tổng
             product_add  = Chitietdonhang.objects.get(order=order_old, product=product)
             if product_add.soluong + count_product > product.soluong:
-                if login == 'True':
+                if login == 1:
                     return JsonResponse({
                         'message': f'Số Lượng Sản Phẩm Vượt Quá'
                     }, status = 302)
@@ -231,8 +232,8 @@ def add_to_card(request, id):
     except Order.DoesNotExist:
         order_new = Order.objects.create(status_id = 1, user=login_user)
         Chitietdonhang.objects.create(order=order_new, product=product, soluong=count_product, money = (product.price*(100-discount)/100)*count_product)
-    
-    if login == 'True':
+
+    if login == 1:
         return JsonResponse({
                     'message': f'Thêm Thành Công Sản Phẩm {product.name}'
                 }, status = 200)
