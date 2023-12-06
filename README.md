@@ -19,4 +19,4 @@ ___
 [Link Git](https://github.com/trung123-gif/myweb.git)
 ___
 ## Link Web:
-[Link Web](https://thanhtrung0599.pythonanywhere.com/)https://thanhtrung0599.pythonanywhere.com/)
+[Link Web](https://thanhtrung0599.pythonanywhere.com/)
